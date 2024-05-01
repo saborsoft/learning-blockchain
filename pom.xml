@@ -124,8 +124,7 @@
                 <configuration>
                     <!-- Exclude specific classes -->
                     <excludes>
-                        <exclude>hu/saborsoft/blockchain/TestHashing.class</exclude>
-                        <exclude>hu/saborsoft/blockchain/TestBlockMining.class</exclude>
+                        <exclude>hu/saborsoft/blockchain/Test*.class</exclude>
                     </excludes>
                 </configuration>
             </plugin>
