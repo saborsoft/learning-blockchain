@@ -1,94 +1,114 @@
 package hu.saborsoft.blockchain.block;
 
 import hu.saborsoft.blockchain.support.UtilityMethods;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BlockTest {
 
     @Test
     void computeHashIDTest() {
+        // GIVEN
         String previousBlockHashID = "0000000000000000";
         int difficultyLevel = 4;
+        // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
         block.addTransaction("Transaction 1");
         block.addTransaction("Transaction 2");
-
-        assertNotNull(block.computeHashID());
+        // THEN
+        assertThat(block.computeHashID()).isNotBlank();
     }
 
     @Test
     void mineTheBlockTest() {
+        // GIVEN
         String previousBlockHashID = "0000000000000000";
         int difficultyLevel = 4;
+        // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
         block.addTransaction("Transaction 1");
         block.addTransaction("Transaction 2");
-
-        assertTrue(block.mineTheBlock());
-        assertNotNull(block.getHashID());
-        Assertions.assertTrue(UtilityMethods.hashMeetsDifficultyLevel(block.getHashID(), difficultyLevel));
+        // THEN
+        assertThat(block.mineTheBlock()).isTrue();
+        assertThat(block.getHashID()).isNotBlank();
+        assertThat(UtilityMethods.hashMeetsDifficultyLevel(block.getHashID(), difficultyLevel)).isTrue();
     }
 
     @Test
     void addTransactionTest() {
+        // GIVEN
         String previousBlockHashID = "0000000000000000";
         int difficultyLevel = 4;
+        // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
         block.addTransaction("Transaction 1");
         block.addTransaction("Transaction 2");
-
+        // WHEN
         List<String> transactions = List.of("Transaction 1", "Transaction 2");
-        assertEquals(transactions, block.getTransactions());
+        assertThat(transactions).isEqualTo(block.getTransactions());
     }
 
     @Test
     void getHashIDTest() {
+        // GIVEN
         String previousBlockHashID = "0000000000000000";
         int difficultyLevel = 4;
+        // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
-        assertNull(block.getHashID());
+        assertThat(block.getHashID()).isNull();
         block.mineTheBlock();
-        assertNotNull(block.getHashID());
+        // THEN
+        assertThat(block.getHashID()).isNotNull();
     }
 
     @Test
     void getNonceTest() {
+        // GIVEN
         String previousBlockHashID = "0000000000000000";
         int difficultyLevel = 10;
+        // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
-        assertEquals(0, block.getNonce());
+        assertThat(0).isEqualTo(block.getNonce());
         block.mineTheBlock();
-        assertTrue(block.getNonce() > 0);
+        // THEN
+        assertThat(block.getNonce()).isGreaterThan(0);
     }
 
     @Test
     void getTimestampTest() {
+        // GIVEN
         String previousBlockHashID = "0000000000000000";
         int difficultyLevel = 4;
+        // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
         long currentTimestamp = UtilityMethods.getTimeStamp();
-        assertTrue(block.getTimestamp() >= currentTimestamp);
+        // THEN
+        assertThat(block.getTimestamp()).isLessThanOrEqualTo(currentTimestamp);
     }
 
     @Test
     void getPreviousBlockHashIDTest() {
+        // GIVEN
         String previousBlockHashID = "0000000000000000";
         int difficultyLevel = 4;
+        // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
-        assertEquals(previousBlockHashID, block.getPreviousBlockHashID());
+        // THEN
+        assertThat(previousBlockHashID).isEqualTo(block.getPreviousBlockHashID());
     }
 
     @Test
     void getDifficultyLevelTest() {
+        // GIVEN
         String previousBlockHashID = "0000000000000000";
         int difficultyLevel = 4;
+        // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
-        assertEquals(difficultyLevel, block.getDifficultyLevel());
+        // THEN
+        assertThat(difficultyLevel).isEqualTo(block.getDifficultyLevel());
     }
 
 }
