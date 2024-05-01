@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Block implements Serializable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UtilityMethods.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Block.class);
 
     @Serial
     private static final long serialVersionUID = 9204506387241993706L;
@@ -36,7 +36,7 @@ public class Block implements Serializable {
             sb.append(t);
         }
         sb.append(Integer.toHexString(difficultyLevel)).append(nonce);
-        byte[] b = UtilityMethods.messageDigestSHA256_toBytes(sb.toString());
+        byte[] b = UtilityMethods.messageDigestSHA256ToBytes(sb.toString());
         return UtilityMethods.toBinaryString(b);
     }
 

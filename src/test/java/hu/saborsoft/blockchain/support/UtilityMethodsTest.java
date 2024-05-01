@@ -18,7 +18,7 @@ class UtilityMethodsTest {
                 49, -111, -35, -127, -57, -9, 10, 75, 40, 104, -118, 54, 33, -126, -104, 111
         };
         // WHEN
-        byte[] actualHash = UtilityMethods.messageDigestSHA256_toBytes(message);
+        byte[] actualHash = UtilityMethods.messageDigestSHA256ToBytes(message);
         // THEN
         assertThat(expectedHash).isEqualTo(actualHash);
     }
@@ -29,7 +29,7 @@ class UtilityMethodsTest {
         String message = "Hello, World!";
         String expectedHash = "3/1gIbsr1bCvZ2KQgJ7DpTGR3YHH9wpLKGiKNiGCmG8=";
         // WHEN
-        String actualHash = UtilityMethods.messageDigestSHA256_toString(message);
+        String actualHash = UtilityMethods.messageDigestSHA256ToString(message);
         // THEN
         assertThat(expectedHash).isEqualTo(actualHash);
     }

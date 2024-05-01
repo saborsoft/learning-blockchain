@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BlockTest {
+class BlockTest {
 
     @Test
     void computeHashIDTest() {
@@ -71,10 +71,10 @@ public class BlockTest {
         int difficultyLevel = 10;
         // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
-        assertThat(0).isEqualTo(block.getNonce());
+        assertThat(block.getNonce()).isZero();
         block.mineTheBlock();
         // THEN
-        assertThat(block.getNonce()).isGreaterThan(0);
+        assertThat(block.getNonce()).isPositive();
     }
 
     @Test
