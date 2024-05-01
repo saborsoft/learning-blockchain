@@ -1,6 +1,8 @@
 package hu.saborsoft.blockchain.block;
 
 import hu.saborsoft.blockchain.support.UtilityMethods;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -9,8 +11,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class Block implements Serializable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UtilityMethods.class);
+
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 9204506387241993706L;
     private final int difficultyLevel;
     private final List<String> transactions = new ArrayList<>();
     private final long timestamp;
@@ -41,6 +46,7 @@ public class Block implements Serializable {
             nonce++;
             hashID = computeHashID();
         }
+        LOG.debug("final nonce: {}", nonce);
         return true;
     }
 

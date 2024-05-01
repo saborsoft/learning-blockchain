@@ -1,6 +1,8 @@
 package hu.saborsoft.blockchain.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -8,6 +10,8 @@ import java.util.Base64;
 import java.util.Calendar;
 
 public class UtilityMethods {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UtilityMethods.class);
 
     public static byte[] messageDigestSHA256_toBytes(String message) {
         try {
@@ -44,12 +48,12 @@ public class UtilityMethods {
 
     public static String toBinaryString(byte[] hash) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < hash.length; i++) {
+        for (byte b : hash) {
             // Transform a byte into an unsigned integer.
-            int x = ((int) hash[i]) + 128;
-            String s = Integer.toBinaryString(x);
+            int x = ((int) b) + 128;
+            StringBuilder s = new StringBuilder(Integer.toBinaryString(x));
             while (s.length() < 8) {
-                s = "0" + s;
+                s.insert(0, "0");
             }
             sb.append(s);
         }
