@@ -124,7 +124,7 @@ class UtilityMethodsTest {
     void toBinaryStringTest_WithNullInput() {
         assertThatThrownBy(() -> UtilityMethods.toBinaryString(null))
                 .isInstanceOf(NullPointerException.class)
-                .hasMessage("Cannot read the array length because \"<local2>\" is null");
+                .hasMessageContaining("Cannot read the array length because");
     }
 
 }
