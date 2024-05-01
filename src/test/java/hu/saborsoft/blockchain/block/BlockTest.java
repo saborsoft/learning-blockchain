@@ -1,6 +1,7 @@
-package hu.saborsoft.blockchain.support;
+package hu.saborsoft.blockchain.block;
 
-import hu.saborsoft.blockchain.block.Block;
+import hu.saborsoft.blockchain.support.UtilityMethods;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class BlockTest {
 
         assertTrue(block.mineTheBlock());
         assertNotNull(block.getHashID());
-        assertTrue(UtilityMethods.hashMeetsDifficultyLevel(block.getHashID(), difficultyLevel));
+        Assertions.assertTrue(UtilityMethods.hashMeetsDifficultyLevel(block.getHashID(), difficultyLevel));
     }
 
     @Test
