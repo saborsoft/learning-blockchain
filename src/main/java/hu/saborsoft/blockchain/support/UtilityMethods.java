@@ -6,16 +6,18 @@ import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Base64;
-import java.util.Calendar;
 
 public class UtilityMethods {
+
+    public static final String ALGORITHM = "SHA-256";
 
     private static final Logger LOG = LoggerFactory.getLogger(UtilityMethods.class);
 
     public static byte[] messageDigestSHA256_toBytes(String message) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            MessageDigest md = MessageDigest.getInstance(ALGORITHM);
             md.update(message.getBytes());
             return md.digest();
         } catch (NoSuchAlgorithmException e) {
@@ -28,7 +30,7 @@ public class UtilityMethods {
     }
 
     public static long getTimeStamp() {
-        return Calendar.getInstance().getTimeInMillis();
+        return Instant.now().toEpochMilli();
     }
 
     public static boolean hashMeetsDifficultyLevel(String hash, int difficultyLevel) {

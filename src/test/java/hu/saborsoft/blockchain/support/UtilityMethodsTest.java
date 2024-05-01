@@ -2,7 +2,7 @@ package hu.saborsoft.blockchain.support;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Calendar;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,7 +37,7 @@ class UtilityMethodsTest {
     @Test
     void getTimeStampTest() {
         // GIVEN
-        long currentTime = Calendar.getInstance().getTimeInMillis();
+        long currentTime = Instant.now().toEpochMilli();
         // WHEN
         long actualTime = UtilityMethods.getTimeStamp();
         // THEN
