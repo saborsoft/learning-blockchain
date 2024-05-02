@@ -124,7 +124,7 @@
                 <configuration>
                     <!-- Exclude specific classes -->
                     <excludes>
-                        <exclude>hu/saborsoft/blockchain/Test*.class</exclude>
+                        <exclude>**/example/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

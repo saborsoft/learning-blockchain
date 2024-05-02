@@ -1,13 +1,13 @@
-package hu.saborsoft.blockchain;
+package hu.saborsoft.blockchain.example;
 
 import hu.saborsoft.blockchain.block.Block;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestBlockMining {
+public class BlockMiningExample {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TestBlockMining.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BlockMiningExample.class);
 
     public static void main(final String[] args) {
         Block b = new Block("0", 20);

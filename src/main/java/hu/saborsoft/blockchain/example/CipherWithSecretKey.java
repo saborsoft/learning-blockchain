@@ -1,4 +1,4 @@
-package hu.saborsoft.blockchain;
+package hu.saborsoft.blockchain.example;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,14 +8,20 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.SecureRandom;
 
-public class TestChipher1 {
+/**
+ * This cipher is encrypt and decrypt with a secret key.
+ * It means that it uses the same key for encrypt and decrypt as well.
+ */
+public class CipherWithSecretKey {
 
     public static final String MESSAGE = "If you were a drop of tear in my eyes";
 
-    private static final Logger LOG = LoggerFactory.getLogger(TestChipher1.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CipherWithSecretKey.class);
 
     public static void main(String[] args) throws Exception {
+        LOG.debug("SecretKey Cipher - it uses a secret key for encrypt and decrypt");
         LOG.debug("Original message: {}", MESSAGE);
+
         SecretKey key = createSecretKey();
 
         // encrypt the original message
