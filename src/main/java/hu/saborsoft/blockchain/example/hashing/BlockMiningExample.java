@@ -1,4 +1,4 @@
-package hu.saborsoft.blockchain.example;
+package hu.saborsoft.blockchain.example.hashing;
 
 import hu.saborsoft.blockchain.block.Block;
 import org.apache.commons.lang3.time.StopWatch;

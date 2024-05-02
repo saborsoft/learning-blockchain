@@ -125,6 +125,8 @@
                     <!-- Exclude specific classes -->
                     <excludes>
                         <exclude>**/example/*</exclude>
+                        <exclude>**/example/cryptography/*</exclude>
+                        <exclude>**/example/hashing/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

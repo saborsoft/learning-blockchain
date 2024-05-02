@@ -1,4 +1,4 @@
-package hu.saborsoft.blockchain.example;
+package hu.saborsoft.blockchain.example.hashing;
 
 import hu.saborsoft.blockchain.support.UtilityMethods;
 import org.slf4j.Logger;

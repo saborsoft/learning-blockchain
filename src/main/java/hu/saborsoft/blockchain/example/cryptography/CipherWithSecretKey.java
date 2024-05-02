@@ -1,4 +1,4 @@
-package hu.saborsoft.blockchain.example;
+package hu.saborsoft.blockchain.example.cryptography;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
