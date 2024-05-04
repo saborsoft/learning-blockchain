@@ -14,6 +14,8 @@ public class UtilityMethods {
 
     public static final String ALGORITHM = "SHA-256";
 
+    public static final String WRONG_ALGORITHM = "wrong algorithm, can never happen";
+
     private static final Logger LOG = LoggerFactory.getLogger(UtilityMethods.class);
 
     private static long uniqueNumber = 0;
@@ -31,7 +33,7 @@ public class UtilityMethods {
             md.update(message.getBytes());
             return md.digest();
         } catch (NoSuchAlgorithmException e) {
-            throw new NoAlgorithmException("wrong algorithm, can never happen", e);
+            throw new NoAlgorithmException(WRONG_ALGORITHM, e);
         }
     }
 
@@ -78,7 +80,7 @@ public class UtilityMethods {
             kpg.initialize(keySize);
             return kpg.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
-            throw new NoAlgorithmException("wrong algorithm, can never happen", e);
+            throw new NoAlgorithmException(WRONG_ALGORITHM, e);
         }
     }
 
@@ -89,7 +91,7 @@ public class UtilityMethods {
             signature.update(message.getBytes());
             return signature.sign();
         } catch (Exception e) {
-            throw new SignatureException("wrong algorithm, can never happen", e);
+            throw new SignatureException("signature error", e);
         }
     }
 
@@ -100,7 +102,7 @@ public class UtilityMethods {
             sig2.update(message.getBytes());
             return sig2.verify(signature);
         } catch (Exception e) {
-            LOG.error("Signature verification error: {}", e.getCause());
+            LOG.error("Signature verification error", e.getCause());
             return false;
         }
     }

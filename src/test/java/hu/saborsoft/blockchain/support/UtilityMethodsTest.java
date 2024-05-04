@@ -161,7 +161,7 @@ class UtilityMethodsTest {
 
         // Assert that the first number is less than the second number,
         // ensuring that each call returns a unique number
-        assertThat(firstNumber < secondNumber).isTrue();
+        assertThat(firstNumber).isLessThan(secondNumber);
     }
 
     @Test
