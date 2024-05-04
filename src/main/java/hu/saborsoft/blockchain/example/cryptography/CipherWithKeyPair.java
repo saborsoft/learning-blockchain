@@ -8,6 +8,8 @@ import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
+import static hu.saborsoft.blockchain.support.UtilityMethods.generateKeyPair;
+
 /**
  * This cipher is encrypt and decrypt with a keypair (public and private key).
  */
@@ -21,7 +23,7 @@ public class CipherWithKeyPair {
         LOG.debug("KeyPair Cipher - it uses a private-public key pair for encrypt and decrypt");
         LOG.debug("Original message: {}", MESSAGE);
 
-        KeyPair keyPair = createKeyPair();
+        KeyPair keyPair = generateKeyPair(4096);
 
         // encrypt the original message
         Cipher encrypter = initCipherEncryptMode(keyPair);
@@ -33,12 +35,6 @@ public class CipherWithKeyPair {
         Cipher decrypter = initCipherDecryptMode(keyPair);
         byte[] decoded = decrypter.doFinal(cipherText);
         LOG.debug("Decoded string: {}", new String(decoded));
-    }
-
-    private static KeyPair createKeyPair() throws Exception {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-        kpg.initialize(4096);
-        return kpg.generateKeyPair();
     }
 
     private static Cipher initCipherEncryptMode(KeyPair keyPair) throws Exception {

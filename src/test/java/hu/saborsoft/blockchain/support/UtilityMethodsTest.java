@@ -2,10 +2,16 @@ package hu.saborsoft.blockchain.support;
 
 import org.junit.jupiter.api.Test;
 
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.Signature;
 import java.time.Instant;
+import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 class UtilityMethodsTest {
 
@@ -125,6 +131,70 @@ class UtilityMethodsTest {
         assertThatThrownBy(() -> UtilityMethods.toBinaryString(null))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining("Cannot read the array length because");
+    }
+
+    @Test
+    void generateKeyPairTest() {
+        // GIVEN
+        // Define the key size
+        int keySize = 2048; // For example, you can choose any key size
+
+        // WHEN
+        // Invoke the method
+        KeyPair keyPair = UtilityMethods.generateKeyPair(keySize);
+
+        // THEN
+        // Assert that the keyPair is not null
+        assertThat(keyPair).isNotNull();
+        // Optionally, you can also assert more specific properties of the keyPair, such as
+        // checking that the public and private keys are not null.
+        // For example:
+        assertThat(keyPair.getPublic()).isNotNull();
+        assertThat(keyPair.getPrivate()).isNotNull();
+    }
+
+    @Test
+    void getUniqueNumberTest() {
+        // Invoke the method twice and capture the returned values
+        long firstNumber = UtilityMethods.getUniqueNumber();
+        long secondNumber = UtilityMethods.getUniqueNumber();
+
+        // Assert that the first number is less than the second number,
+        // ensuring that each call returns a unique number
+        assertThat(firstNumber < secondNumber).isTrue();
+    }
+
+    @Test
+    void getKeyStringTest() {
+        // Create a mock Key object
+        Key mockKey = new MockKey();
+
+        // Generate the expected Base64-encoded string from the mock key
+        String expectedEncodedString = Base64.getEncoder().encodeToString(mockKey.getEncoded());
+
+        // Invoke the method with the mock key
+        String result = UtilityMethods.getKeyString(mockKey);
+
+        // Assert that the result matches the expected encoded string
+        assertThat(result).isEqualTo(expectedEncodedString);
+    }
+
+    // Define a mock Key implementation for testing purposes
+    static class MockKey implements Key {
+        @Override
+        public String getAlgorithm() {
+            return null;
+        }
+
+        @Override
+        public String getFormat() {
+            return null;
+        }
+
+        @Override
+        public byte[] getEncoded() {
+            return "MockKeyEncodedBytes".getBytes(); // Provide some mock encoded bytes
+        }
     }
 
 }
