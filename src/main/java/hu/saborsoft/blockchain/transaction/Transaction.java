@@ -113,7 +113,7 @@ public class Transaction implements Serializable {
         return f;
     }
 
-    protected void addOutputUTXO(UTXO utxo) {
+    public void addOutputUTXO(UTXO utxo) {
         if (!signed) {
             outputs.add(utxo);
         }

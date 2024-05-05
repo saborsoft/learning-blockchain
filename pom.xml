@@ -133,6 +133,7 @@
                         <exclude>**/example/*</exclude>
                         <exclude>**/example/cryptography/*</exclude>
                         <exclude>**/example/hashing/*</exclude>
+                        <exclude>**/example/transaction/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

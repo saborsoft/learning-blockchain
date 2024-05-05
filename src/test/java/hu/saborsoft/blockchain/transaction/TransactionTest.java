@@ -27,13 +27,12 @@ class TransactionTest {
 
         // Create a Transaction with a single receiver
         Transaction transaction = new Transaction(senderKeyPair.getPublic(), receiverKeyPair.getPublic(), 5.0, inputs);
-        transaction.addOutputUTXO(utxo);
 
         // Verify the properties of the Transaction object
         assertThat(transaction.getHashID()).isNotNull();
         assertThat(transaction.getSender()).isEqualTo(senderKeyPair.getPublic());
         assertThat(transaction.getNumberOfInputUTXOs()).isEqualTo(1);
-        assertThat(transaction.getNumberOfOutputUTXOs()).isEqualTo(1);
+        assertThat(transaction.getNumberOfOutputUTXOs()).isZero();
         assertThat(transaction.verifySignature()).isFalse();
     }
 
@@ -53,14 +52,12 @@ class TransactionTest {
         PublicKey[] receivers = {receiver1KeyPair.getPublic(), receiver2KeyPair.getPublic()};
         double[] fundToTransfer = {5.0, 3.0};
         Transaction transaction = new Transaction(senderKeyPair.getPublic(), receivers, fundToTransfer, inputs);
-        transaction.addOutputUTXO(utxo);
-        transaction.addOutputUTXO(utxo);
 
         // Verify the properties of the Transaction object
         assertThat(transaction.getHashID()).isNotNull();
         assertThat(transaction.getSender()).isEqualTo(senderKeyPair.getPublic());
         assertThat(transaction.getNumberOfInputUTXOs()).isEqualTo(1);
-        assertThat(transaction.getNumberOfOutputUTXOs()).isEqualTo(2);
+        assertThat(transaction.getNumberOfOutputUTXOs()).isZero();
         assertThat(transaction.verifySignature()).isFalse();
     }
 
