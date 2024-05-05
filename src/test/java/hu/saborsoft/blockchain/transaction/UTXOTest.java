@@ -7,7 +7,7 @@ import java.security.KeyPair;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UTXOTest {
+class UTXOTest {
 
     @Test
     void constructorTest() {
@@ -27,8 +27,8 @@ public class UTXOTest {
         assertThat(utxo.getSender()).isEqualTo(senderKeyPair.getPublic());
         assertThat(utxo.getReceiver()).isEqualTo(receiverKeyPair.getPublic());
         assertThat(utxo.getFundTransferred()).isEqualTo(10.0);
-        assertThat(utxo.getTimestamp()).isGreaterThan(0);
-        assertThat(utxo.getSequentialNumber()).isGreaterThanOrEqualTo(0);
+        assertThat(utxo.getTimestamp()).isPositive();
+        assertThat(utxo.getSequentialNumber()).isNotNegative();
     }
 
     @Test

@@ -7,7 +7,7 @@ import java.security.PublicKey;
 
 public class UTXO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7625313903583747317L;
     private String hashID;
     private String parentTransactionID;
     private PublicKey receiver;
