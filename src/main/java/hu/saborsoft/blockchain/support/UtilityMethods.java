@@ -2,13 +2,17 @@ package hu.saborsoft.blockchain.support;
 
 import hu.saborsoft.blockchain.exception.NoAlgorithmException;
 import hu.saborsoft.blockchain.exception.SignatureException;
+import hu.saborsoft.blockchain.transaction.Transaction;
+import hu.saborsoft.blockchain.transaction.UTXO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintStream;
 import java.security.*;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.stream.IntStream;
 
 public class UtilityMethods {
 
@@ -109,6 +113,37 @@ public class UtilityMethods {
 
     public static String getKeyString(Key key) {
         return Base64.getEncoder().encodeToString((key.getEncoded()));
+    }
+
+    public static void displayTab(PrintStream out, int level, String s) {
+        for (int i = 0; i < level; i++) {
+            out.print("\t");
+        }
+        out.println(s);
+    }
+
+    public static void displayUTXO(UTXO ux, PrintStream out, int level) {
+        displayTab(out, level, "fund: " + ux.getFundTransferred()
+                + ", receiver: " + getKeyString(ux.getReceiver()));
+    }
+
+    public static void displayTransaction(Transaction t, PrintStream out, int level) {
+        displayTab(out, level, "Transaction{");
+        displayTab(out, level + 1, "ID: " + t.getHashID());
+        displayTab(out, level + 1, "sender:" + UtilityMethods.getKeyString(t.getSender()));
+        displayTab(out, level + 1, "fundToBeTransferred total: " + t.getTotalFundToTransfer());
+        displayTab(out, level + 1, "Input:");
+        IntStream.range(0, t.getNumberOfInputUTXOs()).mapToObj(
+                t::getInputUTXO).forEach(ui -> displayUTXO(ui, out, level + 2));
+        displayTab(out, level + 1, "Output:");
+        IntStream.range(0, t.getNumberOfOutputUTXOs() - 1).mapToObj(
+                t::getOutputUTXO).forEach(ut -> displayUTXO(ut, out, level + 2));
+        UTXO change = t.getOutputUTXO(t.getNumberOfOutputUTXOs() - 1);
+        displayTab(out, level + 2, "change: " + change.getFundTransferred());
+        displayTab(out, level + 1, "transaction fee: " + Transaction.TRANSACTION_FEE);
+        boolean b = t.verifySignature();
+        displayTab(out, level + 1, "\tsignature verification: " + b);
+        displayTab(out, level, "}");
     }
 
 }

@@ -51,26 +51,7 @@ public class TransactionExample {
         // sign the transaction
         t.signTheTransaction(sender.getPrivate());
         // display the transaction to take a look
-        displayTransaction(t);
+        UtilityMethods.displayTransaction(t, System.out, 0);
     }
 
-    // A method written to display the transaction properly.
-    private static void displayTransaction(Transaction t) {
-        System.out.println("Transaction{");
-        System.out.println("\tID: " + t.getHashID());
-        System.out.println("\tsender:" + UtilityMethods.getKeyString(t.getSender()));
-        System.out.println("\tfundToBeTransferred total: " + t.getTotalFundToTransfer());
-        System.out.println("\tReceivers:");
-        for (int i = 0; i < t.getNumberOfOutputUTXOs(); i++) {
-            UTXO utxo = t.getOutputUTXO(i);
-            System.out.println("\t\tfund=" + utxo.getFundTransferred()
-                    + ",receiver=" + UtilityMethods.getKeyString(utxo.getReceiver()));
-        }
-        UTXO change = t.getOutputUTXO(t.getNumberOfOutputUTXOs() - 1);
-        System.out.println("\ttransaction fee: " + Transaction.TRANSACTION_FEE);
-        System.out.println("\tchange: " + change.getFundTransferred());
-        boolean b = t.verifySignature();
-        System.out.println("\tsignature verification: " + b);
-        System.out.println("}");
-    }
 }

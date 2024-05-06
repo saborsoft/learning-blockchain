@@ -4,14 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import java.security.Key;
 import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.Signature;
 import java.time.Instant;
 import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
 
 class UtilityMethodsTest {
 
