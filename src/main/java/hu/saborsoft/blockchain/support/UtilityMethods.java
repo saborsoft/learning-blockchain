@@ -146,4 +146,29 @@ public class UtilityMethods {
         displayTab(out, level, "}");
     }
 
+    public static byte[] encryptionByXOR(byte[] key, String password) {
+        int more = 100;
+        byte[] p = messageDigestSHA256ToBytes(password);
+        byte[] pwds = new byte[p.length * more];
+        for (int i = 0, z = 0; i < more; i++) {
+            for (int j = 0; j < p.length; j++, z++) {
+                pwds[z] = p[j];
+            }
+        }
+        byte[] result = new byte[key.length];
+        int i;
+        for (i = 0; i < key.length && i < pwds.length; i++) {
+            result[i] = (byte) ((key[i] ^ pwds[i]) & 0xFF);
+        }
+        while (i < key.length) {
+            result[i] = key[i];
+            i++;
+        }
+        return result;
+    }
+
+    public static byte[] decryptionByXOR(byte[] key, String password) {
+        return encryptionByXOR(key, password);
+    }
+
 }
