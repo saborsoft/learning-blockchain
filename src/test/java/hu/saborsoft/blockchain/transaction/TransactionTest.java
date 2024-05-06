@@ -81,4 +81,54 @@ class TransactionTest {
         assertThat(transaction1).isNotEqualTo(transaction3);
     }
 
+    @Test
+    void prepareOutputUTXOs_When_ReceiversLengthNotEqual_FundToTransferLength_ReturnsFalse() {
+        // Create a Transaction object with receivers and fundToTransfer of different lengths
+        KeyPair senderKeyPair = UtilityMethods.generateKeyPair(2048);
+        PublicKey receiverKey = UtilityMethods.generateKeyPair(2048).getPublic();
+        List<UTXO> inputs = new ArrayList<>();
+        Transaction transaction = new Transaction(senderKeyPair.getPublic(), new PublicKey[]{receiverKey}, new double[]{10.0, 20.0}, inputs);
+
+        // Call the method and verify it returns false
+        assertThat(transaction.prepareOutputUTXOs()).isFalse();
+    }
+
+    @Test
+    void prepareOutputUTXOs_When_AvailableFundsLessThanTotalCost_ReturnsFalse() {
+        // Create a Transaction object with insufficient available funds
+        KeyPair senderKeyPair = UtilityMethods.generateKeyPair(2048);
+        PublicKey receiverKey = UtilityMethods.generateKeyPair(2048).getPublic();
+        List<UTXO> inputs = new ArrayList<>();
+        UTXO utxo = new UTXO("parentTransactionID", senderKeyPair.getPublic(), receiverKey, 5.0); // Total available funds: 5.0
+        inputs.add(utxo);
+        Transaction transaction = new Transaction(senderKeyPair.getPublic(), new PublicKey[]{receiverKey}, new double[]{10.0}, inputs);
+
+        // Call the method and verify it returns false
+        assertThat(transaction.prepareOutputUTXOs()).isFalse();
+    }
+
+    @Test
+    void prepareOutputUTXOs_When_InputsAndOutputsCorrect_ReturnsTrue() {
+        // Create a Transaction object with correct input data
+        KeyPair senderKeyPair = UtilityMethods.generateKeyPair(2048);
+        PublicKey receiverKey = UtilityMethods.generateKeyPair(2048).getPublic();
+        List<UTXO> inputs = new ArrayList<>();
+        UTXO utxo = new UTXO("parentTransactionID", senderKeyPair.getPublic(), receiverKey, 15.0); // Total available funds: 15.0
+        inputs.add(utxo);
+        Transaction transaction = new Transaction(senderKeyPair.getPublic(), new PublicKey[]{receiverKey}, new double[]{10.0}, inputs);
+
+        // Call the method and verify it returns true
+        assertThat(transaction.prepareOutputUTXOs()).isTrue();
+
+        // Verify the properties of the Transaction object
+        assertThat(transaction.getNumberOfOutputUTXOs()).isEqualTo(2);
+        assertThat(transaction.getSender()).isEqualTo(senderKeyPair.getPublic());
+        assertThat(transaction.getOutputUTXO(0).getReceiver()).isEqualTo(receiverKey);
+        // the second output is the change, the receiver is also the sender in this case
+        assertThat(transaction.getOutputUTXO(1).getReceiver()).isEqualTo(senderKeyPair.getPublic());
+        assertThat(transaction.getOutputUTXO(0).getFundTransferred()).isEqualTo(10.0);
+        // change is only 4 not 5, because we need to deduct the transaction fee
+        assertThat(transaction.getOutputUTXO(1).getFundTransferred()).isEqualTo(4.0);
+    }
+
 }

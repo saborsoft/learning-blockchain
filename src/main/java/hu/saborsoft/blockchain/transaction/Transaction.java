@@ -84,6 +84,28 @@ public class Transaction implements Serializable {
         return sb.toString();
     }
 
+    public boolean prepareOutputUTXOs() {
+        if (receivers.length != fundToTransfer.length) {
+            return false;
+        }
+        double totalCost = getTotalFundToTransfer() + TRANSACTION_FEE;
+        double available = 0;
+        for (int i = 0; i < inputs.size(); i++) {
+            available += inputs.get(i).getFundTransferred();
+        }
+        if (available < totalCost) {
+            return false;
+        }
+        outputs.clear();
+        for (int i = 0; i < receivers.length; i++) {
+            UTXO ut = new UTXO(getHashID(), sender, receivers[i], fundToTransfer[i]);
+            outputs.add(ut);
+        }
+        UTXO change = new UTXO(getHashID(), sender, sender, available - totalCost);
+        outputs.add(change);
+        return true;
+    }
+
     protected void computeHashID() {
         String message = getMessageData();
         hashID = UtilityMethods.messageDigestSHA256ToString(message);
