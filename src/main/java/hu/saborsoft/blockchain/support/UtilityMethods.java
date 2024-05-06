@@ -142,7 +142,7 @@ public class UtilityMethods {
         displayTab(out, level + 2, "change: " + change.getFundTransferred());
         displayTab(out, level + 1, "transaction fee: " + Transaction.TRANSACTION_FEE);
         boolean b = t.verifySignature();
-        displayTab(out, level + 1, "\tsignature verification: " + b);
+        displayTab(out, level + 1, "signature verification: " + b);
         displayTab(out, level, "}");
     }
 

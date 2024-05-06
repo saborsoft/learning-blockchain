@@ -27,31 +27,15 @@ public class TransactionExample {
         List<UTXO> input = new ArrayList<>();
         input.add(uin);
         Transaction t = new Transaction(sender.getPublic(), receivers, fundsToTransfer, input);
-        // make sure that the sender has enough fund
-        double available = 0.0;
-        for (int i = 0; i < input.size(); i++) {
-            available += input.get(i).getFundTransferred();
+        boolean b = t.prepareOutputUTXOs();
+        if (!b) {
+            System.out.println("Transaction failed");
+        } else {
+            // sign the transaction
+            t.signTheTransaction(sender.getPrivate());
+            // display the transaction to take a look
+            UtilityMethods.displayTransaction(t, System.out, 0);
         }
-        // compute the total cost and add the transaction fee
-        double totalCost = t.getTotalFundToTransfer() + Transaction.TRANSACTION_FEE;
-        // if fund is not enough, abort
-        if (available < totalCost) {
-            System.out.println("fund available=" + available
-                    + ", not enough for total cost of " + totalCost);
-            return;
-        }
-        // generate the output
-        for (int i = 0; i < receivers.length; i++) {
-            UTXO ut = new UTXO(t.getHashID(), sender.getPublic(), receivers[i], fundsToTransfer[i]);
-            t.addOutputUTXO(ut);
-        }
-        // generate the change as an UTXO to the sender
-        UTXO change = new UTXO(t.getHashID(), sender.getPublic(), sender.getPublic(), available - totalCost);
-        t.addOutputUTXO(change);
-        // sign the transaction
-        t.signTheTransaction(sender.getPrivate());
-        // display the transaction to take a look
-        UtilityMethods.displayTransaction(t, System.out, 0);
     }
 
 }
