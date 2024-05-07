@@ -24,7 +24,7 @@ public class BlockchainPlatform {
         // set the mining difficulty level. 20 is good for practice
         // depending on your computer, the mining might take tens
         // of seconds or a few minutes
-        int difficultyLevel = 25;
+        int difficultyLevel = 20;
 
         System.out.println("Blockchain platform starts ...");
         System.out.println("creating genesis miner, "
