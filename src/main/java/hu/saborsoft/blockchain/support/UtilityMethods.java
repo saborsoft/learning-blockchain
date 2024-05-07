@@ -158,6 +158,20 @@ public class UtilityMethods {
         displayTab(out, level, "}");
     }
 
+    public static byte[] encrypt(byte[] key, String password, EncryptionAlgorithm algo) {
+        return switch (algo) {
+            case XOR -> encryptionByXOR(key, password);
+            case AES -> encryptionByAES(key, password);
+        };
+    }
+
+    public static byte[] decrypt(byte[] key, String password, EncryptionAlgorithm algo) {
+        return switch (algo) {
+            case XOR -> decryptionByXOR(key, password);
+            case AES -> decryptionByAES(key, password);
+        };
+    }
+
     public static byte[] encryptionByXOR(byte[] key, String password) {
         int more = 100;
         byte[] p = messageDigestSHA256ToBytes(password);
@@ -203,7 +217,6 @@ public class UtilityMethods {
             throw new RuntimeException(e);
         }
     }
-
 
     public static byte[] encryptionByAES(byte[] key, String password) {
         try {
