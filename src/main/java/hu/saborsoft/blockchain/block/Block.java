@@ -1,6 +1,7 @@
 package hu.saborsoft.blockchain.block;
 
 import hu.saborsoft.blockchain.support.UtilityMethods;
+import hu.saborsoft.blockchain.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,12 +13,14 @@ import java.util.List;
 
 public class Block implements Serializable {
 
+    public static final int TRANSACTION_UPPER_LIMIT = 2;
+
     private static final Logger LOG = LoggerFactory.getLogger(Block.class);
 
     @Serial
     private static final long serialVersionUID = 9204506387241993706L;
     private final int difficultyLevel;
-    private final List<String> transactions = new ArrayList<>();
+    private final List<Transaction> transactions = new ArrayList<>();
     private final long timestamp;
     private final String previousBlockHashID;
     private int nonce = 0;
@@ -32,8 +35,8 @@ public class Block implements Serializable {
     public String computeHashID() {
         StringBuilder sb = new StringBuilder();
         sb.append(previousBlockHashID).append(Long.toHexString(timestamp));
-        for (String t : transactions) {
-            sb.append(t);
+        for (Transaction t : transactions) {
+            sb.append(t.getHashID());
         }
         sb.append(Integer.toHexString(difficultyLevel)).append(nonce);
         byte[] b = UtilityMethods.messageDigestSHA256ToBytes(sb.toString());
@@ -50,8 +53,12 @@ public class Block implements Serializable {
         return true;
     }
 
-    public void addTransaction(String transaction) {
+    public boolean addTransaction(Transaction transaction) {
+        if (getTotalNumberOfTransactions() >= TRANSACTION_UPPER_LIMIT) {
+            return false;
+        }
         transactions.add(transaction);
+        return true;
     }
 
     public String getHashID() {
@@ -74,7 +81,11 @@ public class Block implements Serializable {
         return difficultyLevel;
     }
 
-    public List<String> getTransactions() {
-        return Collections.unmodifiableList(transactions);
+    public int getTotalNumberOfTransactions() {
+        return this.transactions.size();
+    }
+
+    public Transaction getTransaction(int index) {
+        return transactions.get(index);
     }
 }

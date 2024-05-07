@@ -1,13 +1,29 @@
 package hu.saborsoft.blockchain.block;
 
 import hu.saborsoft.blockchain.support.UtilityMethods;
+import hu.saborsoft.blockchain.transaction.Transaction;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BlockTest {
+
+    @Mock
+    Transaction transaction1;
+
+    @Mock
+    Transaction transaction2;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     void computeHashIDTest() {
@@ -16,8 +32,8 @@ class BlockTest {
         int difficultyLevel = 4;
         // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
-        block.addTransaction("Transaction 1");
-        block.addTransaction("Transaction 2");
+        block.addTransaction(transaction1);
+        block.addTransaction(transaction2);
         // THEN
         assertThat(block.computeHashID()).isNotBlank();
     }
@@ -29,8 +45,8 @@ class BlockTest {
         int difficultyLevel = 4;
         // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
-        block.addTransaction("Transaction 1");
-        block.addTransaction("Transaction 2");
+        block.addTransaction(transaction1);
+        block.addTransaction(transaction2);
         // THEN
         assertThat(block.mineTheBlock()).isTrue();
         assertThat(block.getHashID()).isNotBlank();
@@ -44,11 +60,12 @@ class BlockTest {
         int difficultyLevel = 4;
         // WHEN
         Block block = new Block(previousBlockHashID, difficultyLevel);
-        block.addTransaction("Transaction 1");
-        block.addTransaction("Transaction 2");
+        block.addTransaction(transaction1);
+        block.addTransaction(transaction2);
         // WHEN
-        List<String> transactions = List.of("Transaction 1", "Transaction 2");
-        assertThat(transactions).isEqualTo(block.getTransactions());
+        List<Transaction> transactions = List.of(transaction1, transaction2);
+        assertThat(transaction1).isEqualTo(block.getTransaction(0));
+        assertThat(transaction2).isEqualTo(block.getTransaction(1));
     }
 
     @Test
