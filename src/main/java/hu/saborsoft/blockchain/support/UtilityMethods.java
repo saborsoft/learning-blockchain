@@ -8,8 +8,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.FileInputStream;
 import java.io.PrintStream;
 import java.security.*;
+import java.security.spec.KeySpec;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.stream.IntStream;
@@ -76,6 +84,10 @@ public class UtilityMethods {
             sb.append(s);
         }
         return sb.toString();
+    }
+
+    public static KeyPair generateKeyPair() {
+        return generateKeyPair(2048);
     }
 
     public static KeyPair generateKeyPair(int keySize) {
@@ -170,5 +182,158 @@ public class UtilityMethods {
     public static byte[] decryptionByXOR(byte[] key, String password) {
         return encryptionByXOR(key, password);
     }
+
+    /**
+     * used only for decrypting a key which should never be more than 4096 bytes
+     *
+     * @param keyIn
+     * @param password
+     * @return
+     */
+    public static byte[] decryptionByXOR(FileInputStream keyIn, String password) {
+        try {
+            byte[] data = new byte[4096];
+            int size = keyIn.read(data);
+            byte[] result = new byte[size];
+            for (int i = 0; i < result.length; i++) {
+                result[i] = data[i];
+            }
+            return decryptionByXOR(result, password);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static byte[] encryptionByAES(byte[] key, String password) {
+        try {
+            byte[] salt = new byte[8];
+            SecureRandom rand = new SecureRandom();
+            rand.nextBytes(salt);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 1024, 128);
+            SecretKey temp = factory.generateSecret(spec);
+            SecretKey secretKey = new SecretKeySpec(temp.getEncoded(), "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            AlgorithmParameters params = cipher.getParameters();
+            byte[] iv = params.getParameterSpec(IvParameterSpec.class).getIV();
+            byte[] output = cipher.doFinal(key);
+            //using a variable to record the length of the output
+            byte[] outputSizeBytes = intToBytes(output.length);
+            byte[] ivSizeBytes = intToBytes(iv.length);
+            byte[] data = new byte[Integer.BYTES * 2
+                    + salt.length + iv.length + output.length];
+            // the order of the data is arranged as the following:
+            // int-forDataSize + int-forIVsize + 8-byte-salt + iv-bytes + output-bytes
+            int z = 0;
+            for (int i = 0; i < outputSizeBytes.length; i++, z++) {
+                data[z] = outputSizeBytes[i];
+            }
+            for (int i = 0; i < ivSizeBytes.length; i++, z++) {
+                data[z] = ivSizeBytes[i];
+            }
+            for (int i = 0; i < salt.length; i++, z++) {
+                data[z] = salt[i];
+            }
+            for (int i = 0; i < iv.length; i++, z++) {
+                data[z] = iv[i];
+            }
+            for (int i = 0; i < output.length; i++, z++) {
+                data[z] = output[i];
+            }
+            return data;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static byte[] decryptionByAES(byte[] key, String password) {
+        try {
+            // divide the input data key[] into proper values
+            // please remember the order of the data is:
+            // int_forOutputSize + int_forIVSize + 8_byte_salt + iv_bytes + output_bytes
+            int z = 0;
+            byte[] lengthByte = new byte[Integer.BYTES];
+            for (int i = 0; i < lengthByte.length; i++, z++) {
+                lengthByte[i] = key[z];
+            }
+            int dataSize = bytesToInt(lengthByte);
+
+            for (int i = 0; i < lengthByte.length; i++, z++) {
+                lengthByte[i] = key[z];
+            }
+            int ivSize = bytesToInt(lengthByte);
+
+            byte[] salt = new byte[8];
+            for (int i = 0; i < salt.length; i++, z++) {
+                salt[i] = key[z];
+            }
+            // iv bytes
+            byte[] ivBytes = new byte[ivSize];
+            for (int i = 0; i < ivBytes.length; i++, z++) {
+                ivBytes[i] = key[z];
+            }
+            // real data bytes
+            byte[] dataBytes = new byte[dataSize];
+            for (int i = 0; i < dataBytes.length; i++, z++) {
+                dataBytes[i] = key[z];
+            }
+            // once data are ready, reconstruct the key and cipher
+            PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray(), salt, 1024, 128);
+            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            SecretKey tmp = secretKeyFactory.generateSecret(pbeKeySpec);
+            SecretKey secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
+            Cipher cipher2 = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            // algorithm parameters (ivBytes) are necessary to initiate cipher
+            cipher2.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(ivBytes));
+            byte[] data = cipher2.doFinal(dataBytes);
+            return data;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static byte[] intToBytes(int v) {
+        byte[] b = new byte[Integer.BYTES];
+        for (int i = b.length - 1; i >= 0; i--) {
+            b[i] = (byte) (v & 0xFF);
+            v = v >> Byte.SIZE;
+        }
+        return b;
+    }
+
+    public static int bytesToInt(byte[] b) {
+        int v = 0;
+        for (int i = 0; i < b.length; i++) {
+            v = v << Byte.SIZE;
+            v = v | (b[i] & 0xFF);
+        }
+        return v;
+    }
+
+    public static byte[] longToBytes(long v) {
+        byte[] b = new byte[Long.BYTES];
+        for (int i = b.length - 1; i >= 0; i--) {
+            b[i] = (byte) (v & 0xFFFF);
+            v = v >> Byte.SIZE;
+        }
+        return b;
+    }
+
+    /**
+     * the byte array must be of size 8
+     *
+     * @param b
+     */
+    public static long bytesToLong(byte[] b) {
+        long v = 0L;
+        for (int i = 0; i < b.length; i++) {
+            v = v << Byte.SIZE;
+            v = v | (b[i] & 0xFFFF);
+        }
+        return v;
+    }
+
 
 }
