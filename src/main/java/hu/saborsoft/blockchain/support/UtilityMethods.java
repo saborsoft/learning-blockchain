@@ -1,5 +1,7 @@
 package hu.saborsoft.blockchain.support;
 
+import hu.saborsoft.blockchain.block.Block;
+import hu.saborsoft.blockchain.blockchain.Blockchain;
 import hu.saborsoft.blockchain.exception.NoAlgorithmException;
 import hu.saborsoft.blockchain.exception.SignatureException;
 import hu.saborsoft.blockchain.transaction.Transaction;
@@ -155,6 +157,32 @@ public class UtilityMethods {
         displayTab(out, level + 1, "transaction fee: " + Transaction.TRANSACTION_FEE);
         boolean b = t.verifySignature();
         displayTab(out, level + 1, "signature verification: " + b);
+        displayTab(out, level, "}");
+    }
+
+    // a method to display the content of a block
+    public static void displayBlock(Block block, PrintStream out, int level) {
+        displayTab(out, level, "Block{");
+        displayTab(out, level, "\tID: " + block.getHashID());
+        // display the transactions inside
+        for (int i = 0; i < block.getTotalNumberOfTransactions(); i++) {
+            displayTransaction(block.getTransaction(i), out, level + 1);
+        }
+        // display the reward transaction
+        if (block.getRewardTransaction() != null) {
+            displayTab(out, level, "\tReward Transaction:");
+            displayTransaction(block.getRewardTransaction(), out, level + 1);
+        }
+        displayTab(out, level, "}");
+    }
+
+    // a method to display the content of a blockchain
+    public static void displayBlockchain(Blockchain ledger, PrintStream out, int level) {
+        displayTab(out, level, "Blockchain{ number of blocks: " + ledger.size());
+        for (int i = 0; i < ledger.size(); i++) {
+            Block block = ledger.getBlock(i);
+            displayBlock(block, out, level + 1);
+        }
         displayTab(out, level, "}");
     }
 
@@ -346,6 +374,29 @@ public class UtilityMethods {
             v = v | (b[i] & 0xFFFF);
         }
         return v;
+    }
+
+    // the method to be called by other classes. it applies a recursive algorithm to
+    // generate the root hash starting from the tree leaves
+    public static String computeMerkleTreeRootHash(String[] hashes) {
+        return computeMerkleTreeRootHash(hashes, 0, hashes.length - 1);
+    }
+
+    // the method recursively builds up root hash
+    private static String computeMerkleTreeRootHash(String[] hashes, int from, int end) {
+        // when there is only one hash string, return this string
+        if (end - from + 1 == 1) {
+            return hashes[end];
+        } else if (end - from + 1 == 2) {
+            // compute the hashID from the two nodes below
+            return messageDigestSHA256ToString(hashes[from] + hashes[end]);
+        } else {
+            // we need continue dividing the array into two parts to reach the leaves
+            int c = (from + end) / 2;
+            String mesg = computeMerkleTreeRootHash(hashes, from, c)
+                    + computeMerkleTreeRootHash(hashes, c + 1, end);
+            return messageDigestSHA256ToString(mesg);
+        }
     }
 
 
